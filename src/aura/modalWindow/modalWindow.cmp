@@ -1,0 +1,50 @@
+<aura:component implements="lightning:actionOverride,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global" >
+    
+    <aura:attribute Name="selItem" type="object"  access="public" /> 
+    <aura:attribute Name="selItem1" type="object"  access="public" />
+    <aura:attribute Name="selItem2" type="object"  access="public" />
+    <aura:attribute Name="selItem3" type="object"  access="public" />
+     <aura:attribute Name="selId" type="String"  access="public" />
+    
+    <ui:button class="slds-align_absolute-center" label="Click Me To Popup!!!" press="{!c.openmodal}"  /> 
+    <div role="dialog" tabindex="-1" aria-labelledby="header43" aura:id="Modalbox" class="slds-modal slds-fade-in-open slds-modal_medium">
+        <div class="slds-modal__container" style="width: 65%;">
+            
+            <div class="slds-modal__content slds-p-around--medium">
+                <!--FIRSTSECTION-->
+                <div class="slds-p-left_xx-large slds-p-right_xx-large">
+                    <div class="slds-page-header" style="padding-top: 9px; padding-bottom: 9px;, padding-right: 9px;, padding-left: 10px;">
+                        <h3 style="font-size: 1rem;" title="">Lookup</h3>
+                    </div> 
+                </div>    
+                <c:Lookup objectName="Opportunity"
+                          field_API_text="Name"
+                          field_API_val="Id"
+                          limit="4"
+                          field_API_search="Name"
+                          lookupIcon="standard:opportunity" 
+                          selItem="{!v.selItem}" 
+                          placeholder="Enter space after text to search Opportunities"
+                          selId="{!v.selId}"
+                          /> 
+                <aura:if isTrue="{! not(empty(v.selItem)) }"> 
+                    <br />
+                    This is Parent Lightning component <br />
+                    Item Selected : <br />
+                    ID - {#v.selItem.val} <br /> 
+                    Text - {#v.selItem.text}<br />
+                    Object - {#v.selItem.objName}
+                    New - {#v.selId}
+                </aura:if> 
+                <div class="slds-grid slds-p-top_medium">
+                    
+                </div>
+            </div>
+            
+            <div class="slds-modal__footer">
+                <ui:button label="close" press="{!c.closeModal}"  />
+            </div>
+        </div>
+    </div>
+    <div class="slds-backdrop slds-backdrop--open" aura:id="Modalbackdrop"></div>   
+</aura:component>

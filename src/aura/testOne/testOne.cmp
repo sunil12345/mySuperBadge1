@@ -1,0 +1,26 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	
+    <aura:attribute name="textColor" type="String" default="" />
+	<aura:attribute name="_keys" type="List" description="Set in init: buttons shown on dial pad"/>
+    <aura:attribute name="size" type="String" default=""/>
+	<aura:registerEvent name="keyClick" type="c:dialPadClick" description="Fired when a key is clicked"/>
+	<aura:handler name="init" value="{!this}" action="{!c.init}"/>
+	<div class="slds-grid slds-wrap">
+        <p style="{!'color:' +v.textColor}">
+       Hi This is s Sample Demo of How to use Desing Resource In Lightning Componnet
+     </p>
+        
+		<aura:iteration items="{!v._keys}" var="key">
+			<a class="dialPadKey slds-col slds-size--1-of-3 slds-no-flex slds-button--neutral" onclick="{!c.handleClick}" data-value="{!key.value}">
+				<div class="{! 'slds-text-color--default slds-text-align--center keyValue'+ (v.size)}">
+					{!key.value}
+				</div>
+				<div class="keyText slds-text-color--weak slds-text-align--center slds-text-body--regular">
+					{!key.text}
+				</div>
+			</a>
+		</aura:iteration>
+	</div>
+
+    
+</aura:component>

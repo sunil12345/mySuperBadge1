@@ -1,0 +1,161 @@
+<apex:page standardController="Account" extensions="CustomLookupWindowController">
+    <apex:slds />
+    <style>
+        .custPopup{ border-width: 0px; border-radius:10px; z-index: 9999; left: 50%; padding:20px; position: fixed; top:40%;}
+        /* These are the 3 css properties you will need to change so the popup displays in the center of the screen. First set the width. Then set margin-left to negative half of what the width is. You can add the height property for a fixed size pop up if you want.*/
+        .popupBackground{ background-color:rgba(158, 158, 158, 0.34); opacity: 1.0; filter: alpha(opacity = 30); position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: 9998; }
+    </style>
+    <!-- start spinner -->
+    <apex:actionstatus id="myStatus">
+        <apex:facet name="start">
+            <div class="demo-only popupBackground" id="myStatus1">
+                <div role="status" class="custPopup slds-spinner slds-spinner_medium slds-spinner_brand">
+                    <span class="slds-assistive-text">Please wait...</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </apex:facet>
+    </apex:actionstatus>
+    <!-- End spinner -->
+    <apex:form id="frm">
+ <apex:pageMessages ></apex:pageMessages>
+        <apex:actionFunction name="renderToggleJS" immediate="true" action="{!renderToggle}" reRender="NewRecordData">
+                 
+         <apex:param id="param1" name="param1" value="" />
+        </apex:actionFunction>
+        <apex:actionFunction name="GoForSearchText" immediate="true" action="{!GoForSearch}" reRender="NewRecordData"/>
+            
+        <div class="slds-grid">
+            <div class="slds-form-element slds-col slds-size_2-of-6 slds-p-left_large slds-p-top_large">
+                <label class="slds-form-element__label" >Choose a Hotel</label>
+                <div class="slds-form-element__control">  
+                    <apex:inputHidden id="lookupIdField" value="{!lookupId}" />
+                    <apex:inputText id="lookupField" value="{!searchString}" styleClass="slds-input" onchange="GoForSearchText"/>
+                    <a href="Javascript:void(0)" style="margin-left: 90%;" onclick="javascript:document.getElementById('popupWindow').style.display='block';">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- start Lookup window -->
+        <div class="demo-only" id="popupWindow" style="display:block;">
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick="closePopup();return false;" title="Close">
+                            X
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Lookup</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <div class="slds-tabs_default">
+                            <ul class="slds-tabs_default__nav" role="tablist">
+                                <li class="slds-tabs_default__item slds-is-active" onclick="ShowTabData('tab-default-1',this);renderToggleJS('SearchRecord');return false;" title="Search" role="presentation">
+                                    <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-default-1" id="tab-default-1__item">Search</a>
+                                </li>
+                                <li class="slds-tabs_default__item" onclick="ShowTabData('tab-default-2',this);renderToggleJS('NewRecord');return false;" title="New Hotel" role="presentation">
+                                    <a class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item">New Hotel</a>
+                                </li>
+                            </ul>
+                            <!-- Search tab content -->
+                            <div id="tab-default-1" class="slds-tabs_default__content slds-show" role="tabpanel" aria-labelledby="tab-default-1__item">
+                                <div class="slds-grid slds-size--1-of-1 slds-small-size--1-of-3 slds-medium-size--1-of-3 slds-p-vertical_medium">
+                                    <div class="slds-p-horizontal_medium">
+                                        <apex:inputText value="{!searchString}" styleClass="slds-input" />
+                                    </div>
+                                    <div>
+                                        <apex:commandButton value="Go!" action="{!GoForSearch}" status="myStatus" reRender="tableData" styleClass="slds-button slds-button_neutral" />
+                                    </div>
+                                </div>
+                                <apex:outputPanel id="tableData" styleClass="slds-p-vertical_medium">
+                                    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                        <thead>
+                                            <tr class="slds-line-height_reset">
+                                                <th class="slds-text-title_caps" scope="col">
+                                                    <div class="slds-truncate" title="Hotel Name">Hotel Name</div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <apex:repeat value="{!Hotels}" var="Hotel">
+                                                <tr class="slds-hint-parent">
+                                                    <th data-label="Hotel Name" scope="row">
+                                                        <div class="slds-truncate" title="{!Hotel.name}">
+                                                            <a href="javascript:void(0);" onclick="setValueToLookupField('{!Hotel.name}','{!Hotel.id}')" tabindex="-1">{!Hotel.name}</a>
+                                                        </div>
+                                                    </th>
+                                                </tr>
+                                            </apex:repeat>
+                                        </tbody>
+                                    </table>
+                                    <apex:outputPanel rendered="{!Hotels.size < 1 }">
+                                        <div class="slds-text-align_center">
+                                            No result for your search!
+                                        </div>
+                                    </apex:outputPanel>
+                                </apex:outputPanel>
+                            </div>
+                            <!-- Search tab content -->
+                            <!-- New record tab content -->
+                            <div id="tab-default-2" class="slds-tabs_default__content slds-hide" role="tabpanel" aria-labelledby="tab-default-2__item">
+                                <!-- This outputpanel is for re-rendering the tab content when changing the tab. Because both tabs have the same form so if the new record has a required field then it will not go to the server whether it will call from search tab. -->
+                                <apex:outputPanel id="NewRecordData">
+                                    <apex:outputPanel rendered="{! renderFlag == 'NewRecord'}">
+                                        <div class="slds-grid slds-wrap slds-p-horizontal_medium">
+                                            <div class="slds-size--1-of-1 slds-small-size--1-of-2 slds-medium-size--1-of-2 slds-p-horizontal_medium">
+                                                <label class="slds-radio_button__label" for="Hotel Name">
+                                                    <span class="slds-radio_faux">Hotel Name</span>
+                                                </label>
+                                                <apex:inputField value="{!newHotel.Name}" styleClass="slds-input" />
+                                            </div>
+                                            <div class="slds-size--1-of-1 slds-small-size--1-of-2 slds-medium-size--1-of-2 slds-p-horizontal_medium">
+                                                <label class="slds-radio_button__label" for="Hotel Contact Number">
+                                                    <span class="slds-radio_faux">Hotel Contact Number</span>
+                                                </label>
+                                                <apex:inputField value="{!newHotel.Name}" styleClass="slds-input" />
+                                            </div>
+                                            <div class="slds-size--1-of-1 slds-small-size--1-of-1 slds-medium-size--1-of-1 slds-p-vertical_medium slds-p-horizontal_medium">
+                                                <apex:commandButton value="Save" action="{!newHotel}" status="myStatus" reRender="NewRecordData" styleClass="slds-button slds-button_brand slds-float_right"/>
+                                            </div>
+                                        </div>
+                                    </apex:outputPanel>
+                                </apex:outputPanel>
+                            </div>
+                            <!-- New record tab content -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+        <!-- End Lookup window -->
+        <script>
+        function ShowTabData(id,obj){
+            var element = document.getElementsByClassName('slds-show');
+            console.log('****element**'+element);
+            for(var i = 0; i < element.length; i++){
+                element[i].classList.add("slds-hide");
+                element[i].classList.remove("slds-show");
+            }
+            document.getElementById(id).classList.add("slds-show");
+            document.getElementById(id).classList.remove("slds-hide");
+            var element2 = document.getElementsByClassName('slds-is-active');
+            for(var i = 0; i < element2.length; i++){
+                element2[i].classList.remove("slds-is-active");
+            }
+            obj.classList.add('slds-is-active');
+        }
+
+        function setValueToLookupField(val, lookupId){
+            document.getElementById('{!$Component.lookupField}').value = val;
+            document.getElementById('{!$Component.lookupIdField}').value = lookupId;
+            closePopup();
+        }
+
+        function closePopup(){
+         document.getElementById('popupWindow').style.display='none';
+        }
+        </script>
+    </apex:form>
+</apex:page>

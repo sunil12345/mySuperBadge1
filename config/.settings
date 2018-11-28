@@ -1,0 +1,17 @@
+{
+    "projectName": "Sunil Org",
+    "username": "superbadge1@gmail.com",
+    "id": "ead10d30-f229-11e8-912f-9d901ae7457a",
+    "namespace": "",
+    "orgType": "developer",
+    "loginUrl": "https://login.salesforce.com/",
+    "instanceUrl": "https://sunildev-dev-ed.my.salesforce.com",
+    "workspace": "C:\\MVM",
+    "subscription": [
+        "ApexClass",
+        "ApexComponent",
+        "ApexPage",
+        "ApexTrigger",
+        "StaticResource"
+    ]
+}
